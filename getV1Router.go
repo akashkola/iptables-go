@@ -6,6 +6,7 @@ func getV1Router() *chi.Mux {
     router := chi.NewRouter()
 
     router.Get("/input", handlerGetInputRules)
+    router.Post("/input", handlerAddInputRule)
 
     return router
 
