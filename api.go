@@ -14,11 +14,11 @@ type ApiServer struct {
 }
 
 type ApiError struct {
-    error string
+    ErrorMsg string `json:"error,omitempty"`
 }
 
 func (e *ApiError) Error() string {
-    return fmt.Sprintf("Error: %v", e.error)
+    return fmt.Sprintf("Error: %v", e.ErrorMsg)
 }
 
 func NewServer(listenAddr string) *ApiServer {

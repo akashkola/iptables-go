@@ -11,16 +11,6 @@ func ReadRequestBody(r *http.Request) ([]byte, error) {
     return io.ReadAll(r.Body)
 }
 
-func GetRequestedRuleNumber(body []byte, ruleNumber *RuleNumber) error {
-    reader := strings.NewReader(string(body))
-    decoder := json.NewDecoder(reader)
-    err := decoder.Decode(ruleNumber)
-    if err != nil {
-        return err
-    }
-    return nil
-}
-
 func GetFilterTableRuleFromRequest(body []byte, filterTableRule *FilterTableRule) error {
     reader := strings.NewReader(string(body))
     decoder := json.NewDecoder(reader)

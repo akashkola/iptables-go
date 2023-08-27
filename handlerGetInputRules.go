@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"net/http"
 )
@@ -9,7 +8,7 @@ import (
 func handlerGetInputRules(w http.ResponseWriter, r *http.Request) {
     rules, err := GetRules(TableFilter, ChainInput)
     if err != nil {
-        WriteJSON(w, http.StatusInternalServerError, errors.New("unable to read rules"))
+        WriteJSON(w, http.StatusInternalServerError, ApiError{ErrorMsg: "unable to read rules"})
         log.Println(err)
         return
     }
