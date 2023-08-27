@@ -1,66 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"os/exec"
 	"strconv"
 	"strings"
 )
 
-type FilterTableRule struct {
-    SourceAdress *string `json:"source-address,omitempty"`
-    DestinationAdress *string `json:"destination-address,omitempty"`
-    Protocol *string `json:"protocol,omitempty"`
-    SourcePort *string `json:"source-port,omitempty"`
-    DestinationPort *string `json:"destination-port,omitempty"`
-    Target *string `json:"target,omitempty"`
-}
-
-type Table string
-
-const (
-    TableFilter Table = "filter"
-)
-
-type Chain string
-
-const (
-    ChainInput Chain = "INPUT"
-)
-
-const (
-    cmdIpTables string = "iptables"
-)
-
-
-const (
-    sourceAdressOption string= "-s"
-    destinationAdressOption string = "-d"
-    protocolOption string = "-p"
-    sourcePortOption string = "--sport"
-    destinationPortOption string = "--dport"
-    targetOption string = "-j"
-)
-
-type RuleNumber struct {
-    RuleNum *int `json:"rule-number,omitempty"`
-}
-
-
-func filterEmptyString(str *[]string) []string {
-    filteredStringSlice := make([]string, 0)
-    for _, strValue :=  range *str {
-        if strValue == "" {
-            continue
-        }
-        filteredStringSlice = append(filteredStringSlice, strValue)
-    }
-    return filteredStringSlice
-}
-
-func getRules(table Table, chain Chain) ([]FilterTableRule, error) {
+func GetRules(table Table, chain Chain) ([]FilterTableRule, error) {
     var args []string = []string{ "-S", string(chain) }
-    rulesInBytes, err := exec.Command(cmdIpTables, args...).CombinedOutput()
+    rulesInBytes, err := exec.Command(CmdIpTables, args...).CombinedOutput()
     if err != nil {
         return nil, err
     }
@@ -77,25 +25,23 @@ func parseRules(chain Chain, rulesInBytes []byte) ([]FilterTableRule, error) {
     for _, rule := range rules[1:len(rules) - 1] {
         var filterTableRule FilterTableRule
         splittedRule := strings.Split(rule, " ")
-        splittedRule = filterEmptyString(&splittedRule)
+        splittedRule = FilterEmptyString(&splittedRule)
         for i := 0; i < len(splittedRule); i += 2 {
             option := splittedRule[i]
             value := splittedRule[i + 1]
             switch option {
-                case sourceAdressOption:
+                case SourceAdressOption:
                     filterTableRule.SourceAdress = &value
-                case destinationAdressOption:
+                case DestinationAdressOption:
                     filterTableRule.DestinationAdress = &value
-                case protocolOption:
+                case ProtocolOption:
                     filterTableRule.Protocol = &value
-                case sourcePortOption:
+                case SourcePortOption:
                     filterTableRule.SourcePort = &value
-                case destinationPortOption:
+                case DestinationPortOption:
                     filterTableRule.DestinationPort = &value
-                case targetOption:
+                case TargetOption:
                     filterTableRule.Target = &value
-                default:
-                    fmt.Println("default case : ", option, ": ", value)
             }
         }
         parsedRules = append(parsedRules, filterTableRule)
@@ -103,9 +49,9 @@ func parseRules(chain Chain, rulesInBytes []byte) ([]FilterTableRule, error) {
     return parsedRules, nil
 }
 
-func getDefaultPolicy(table Table, chain Chain) (string, error) {
+func GetDefaultPolicy(table Table, chain Chain) (string, error) {
     var args []string = []string { "-S", string(chain), "-t", string(table) } 
-    output, err := exec.Command(cmdIpTables, args...).CombinedOutput()
+    output, err := exec.Command(CmdIpTables, args...).CombinedOutput()
     if err != nil {
         return "", err
     }
@@ -115,34 +61,53 @@ func getDefaultPolicy(table Table, chain Chain) (string, error) {
     return chainDefaultPolicy[2], nil
 }
 
-func addRule(table Table, chain Chain, filterTableRule *FilterTableRule, numRule *int) error {
+func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule, numRule *int) error {
     if numRule == nil {
         numRule = new(int)
         *numRule = 1
-    }
+    }    
+
     args := []string{"-I", string(chain), strconv.Itoa(*numRule), "-t", string(table)}
 
     if filterTableRule.SourceAdress != nil {
-        args = append(args, sourceAdressOption, *filterTableRule.SourceAdress)
+        args = append(args, SourceAdressOption, *filterTableRule.SourceAdress)
     }
     if filterTableRule.DestinationAdress != nil {
-        args = append(args, destinationAdressOption, *filterTableRule.DestinationAdress)
+        args = append(args, DestinationAdressOption, *filterTableRule.DestinationAdress)
     }
     if filterTableRule.Protocol != nil {
-        args = append(args, protocolOption, *filterTableRule.Protocol)
+        args = append(args, ProtocolOption, *filterTableRule.Protocol)
     }
     if filterTableRule.SourcePort != nil {
-        args = append(args, sourcePortOption, *filterTableRule.SourcePort)
+        args = append(args, SourcePortOption, *filterTableRule.SourcePort)
     }
     if filterTableRule.DestinationPort != nil {
-        args = append(args, destinationPortOption, *filterTableRule.DestinationPort)
+        args = append(args, DestinationPortOption, *filterTableRule.DestinationPort)
     }
     if filterTableRule.Target != nil {
-        args = append(args, targetOption, *filterTableRule.Target)
+        args = append(args, TargetOption, *filterTableRule.Target)
     }
-    _, err := exec.Command(cmdIpTables, args...).CombinedOutput()
+    _, err := exec.Command(CmdIpTables, args...).CombinedOutput()
     if err != nil {
         return err
     }
     return nil
 }
+
+func ValidateRuleNumber(table Table, chain Chain, ruleNumber int) error {
+    rules, err := GetRules(table, chain)
+    if err != nil {
+        return err
+    }
+
+    rulesLength := len(rules)
+    if ruleNumber > rulesLength + 1 {
+        return &ApiError{error: "rule number is too big"}
+    } 
+    if ruleNumber <= 0 {
+        return &ApiError{error: "invalid rule number"}
+    }
+
+    return nil
+
+} 
