@@ -1,9 +1,6 @@
-
 # Iptables-GO
 
 A rest API using GOlang to manage linux iptables
-
-
 
 ## API Reference
 
@@ -19,15 +16,15 @@ A rest API using GOlang to manage linux iptables
   POST /v1/input
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `sourceAddress` | `string` | **Optional**. source address |
+| Parameter            | Type     | Description                       |
+| :------------------- | :------- | :-------------------------------- |
+| `sourceAddress`      | `string` | **Optional**. source address      |
 | `destinationAddress` | `string` | **Optional**. destination address |
-| `protocol` | `string` | **Optional**. protocol |
-| `sourcePort` | `int` | **Optional**. source port |
-| `destinationPort` | `int` | **Optional**. destination port |
-| `target` | `string` | **Optional**. target |
-| `ruleNumber` | `int` | **Optional**. rule number |
+| `protocol`           | `string` | **Optional**. protocol            |
+| `sourcePort`         | `int`    | **Optional**. source port         |
+| `destinationPort`    | `int`    | **Optional**. destination port    |
+| `target`             | `string` | **Optional**. target              |
+| `ruleNumber`         | `int`    | **Optional**. rule number         |
 
 #### Update Rule
 
@@ -35,15 +32,14 @@ A rest API using GOlang to manage linux iptables
   PATCH /v1/input/{ruleNumber}
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `sourceAddress` | `string` | **Optional**. source address |
+| Parameter            | Type     | Description                       |
+| :------------------- | :------- | :-------------------------------- |
+| `sourceAddress`      | `string` | **Optional**. source address      |
 | `destinationAddress` | `string` | **Optional**. destination address |
-| `protocol` | `string` | **Optional**. protocol |
-| `sourcePort` | `int` | **Optional**. source port |
-| `destinationPort` | `int` | **Optional**. destination port |
-| `target` | `string` | **Optional**. target |
-
+| `protocol`           | `string` | **Optional**. protocol            |
+| `sourcePort`         | `int`    | **Optional**. source port         |
+| `destinationPort`    | `int`    | **Optional**. destination port    |
+| `target`             | `string` | **Optional**. target              |
 
 #### Delete Rule
 
@@ -77,7 +73,6 @@ Start the server
   make run
 ```
 
-
 ## Contributing
 
 Contributions are always welcome!
@@ -86,9 +81,6 @@ Contributions are always welcome!
 
 **Server:** GOlang
 
-
 ## Authors
 
-- [akashkola](https://www.github.com/akashkola)
-
-
+-   [akashkola](https://www.github.com/akashkola)

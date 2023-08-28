@@ -8,14 +8,17 @@ import (
 
 func GetRules(table Table, chain Chain) ([]FilterTableRule, error) {
 	var args []string = []string{ListRulesOption, string(chain)}
+
 	rulesInBytes, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
 		return nil, err
 	}
+
 	rules, err := parseRules(chain, rulesInBytes)
 	if err != nil {
 		return nil, err
 	}
+
 	return rules, nil
 }
 
@@ -132,5 +135,4 @@ func GetRuleByRuleNumber(table Table, chain Chain, ruleNumber *int) (*FilterTabl
 	}
 
 	return filterTableRule, nil
-
 }
