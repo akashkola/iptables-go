@@ -35,7 +35,7 @@ func (s *ApiServer) HandlerUpdateInputRule(w http.ResponseWriter, r *http.Reques
 	}
 
 	// get existingRule using ruleNumber
-	existingRule, err := GetRuleByNumRule(TableFilter, ChainInput, &ruleNumber)
+	existingRule, err := GetRuleByRuleNumber(TableFilter, ChainInput, &ruleNumber)
 	if err != nil {
 		return err
 	}

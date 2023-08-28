@@ -118,7 +118,7 @@ func DeleteRule(table Table, chain Chain, ruleNumber *int) error {
 	return err
 }
 
-func GetRuleByNumRule(table Table, chain Chain, ruleNumber *int) (*FilterTableRule, error) {
+func GetRuleByRuleNumber(table Table, chain Chain, ruleNumber *int) (*FilterTableRule, error) {
 	rules, err := GetRules(table, chain)
 	if err != nil {
 		return nil, err
