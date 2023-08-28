@@ -7,7 +7,7 @@ import (
 )
 
 func GetRules(table Table, chain Chain) ([]FilterTableRule, error) {
-	var args []string = []string{ ListRulesOption, string(chain) }
+	var args []string = []string{ListRulesOption, string(chain)}
 	rulesInBytes, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
 		return nil, err
@@ -38,20 +38,20 @@ func parseRules(chain Chain, rulesInBytes []byte) ([]FilterTableRule, error) {
 				filterTableRule.Protocol = &value
 			case SourcePortOption:
 				sourcePort := new(int32)
-                convertedSourcePort, err := strconv.Atoi(value)
-                if err != nil {
-                    return nil, err
-                }
-                *sourcePort = int32(convertedSourcePort)
+				convertedSourcePort, err := strconv.Atoi(value)
+				if err != nil {
+					return nil, err
+				}
+				*sourcePort = int32(convertedSourcePort)
 				filterTableRule.SourcePort = sourcePort
 			case DestinationPortOption:
 				destinationPort := new(int32)
-                convertedDestinationPort, err := strconv.Atoi(value)
-                if err != nil {
-                    return nil, err
-                }
-                *destinationPort = int32(convertedDestinationPort)
-                filterTableRule.DestinationPort = destinationPort
+				convertedDestinationPort, err := strconv.Atoi(value)
+				if err != nil {
+					return nil, err
+				}
+				*destinationPort = int32(convertedDestinationPort)
+				filterTableRule.DestinationPort = destinationPort
 			case TargetOption:
 				filterTableRule.Target = &value
 			}
@@ -62,7 +62,7 @@ func parseRules(chain Chain, rulesInBytes []byte) ([]FilterTableRule, error) {
 }
 
 func GetDefaultPolicy(table Table, chain Chain) (string, error) {
-	var args []string = []string{ ListRulesOption, string(chain), TableOption, string(table) }
+	var args []string = []string{ListRulesOption, string(chain), TableOption, string(table)}
 	output, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
 		return "", err
@@ -79,10 +79,9 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 		*filterTableRule.RuleNumber = 1
 	}
 
-	args := []string{ InsertOption, string(chain), strconv.Itoa(*filterTableRule.RuleNumber), TableOption, string(table)}
+	args := []string{InsertOption, string(chain), strconv.Itoa(*filterTableRule.RuleNumber), TableOption, string(table)}
 
-
-    if filterTableRule.SourceAdress != nil {
+	if filterTableRule.SourceAdress != nil {
 		args = append(args, SourceAdressOption, *filterTableRule.SourceAdress)
 	}
 	if filterTableRule.DestinationAdress != nil {
@@ -101,9 +100,9 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 		args = append(args, TargetOption, *filterTableRule.Target)
 	}
 
-    if IsEmptyRule(filterTableRule, true) {
-        return &ApiError{ ErrorMsg: "empty rule" }
-    }
+	if IsEmptyRule(filterTableRule, true) {
+		return &ApiError{ErrorMsg: "empty rule"}
+	}
 
 	_, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
@@ -113,25 +112,25 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 }
 
 func DeleteRule(table Table, chain Chain, ruleNumber *int) error {
-    args := []string{ DeleteOption, string(chain), strconv.Itoa(*ruleNumber) }
+	args := []string{DeleteOption, string(chain), strconv.Itoa(*ruleNumber)}
 
-    _, err := exec.Command(CmdIpTables, args...).CombinedOutput()
-    return err
+	_, err := exec.Command(CmdIpTables, args...).CombinedOutput()
+	return err
 }
 
 func GetRuleByNumRule(table Table, chain Chain, ruleNumber *int) (*FilterTableRule, error) {
-    rules, err := GetRules(table, chain)
-    if err != nil {
-        return nil, err
-    }
-    filterTableRule := new(FilterTableRule)
-    for i, rule := range rules {
-        if i + 1 == *ruleNumber {
-            filterTableRule = &rule
-            break
-        }
-    }
+	rules, err := GetRules(table, chain)
+	if err != nil {
+		return nil, err
+	}
+	filterTableRule := new(FilterTableRule)
+	for i, rule := range rules {
+		if i+1 == *ruleNumber {
+			filterTableRule = &rule
+			break
+		}
+	}
 
-    return filterTableRule, nil
+	return filterTableRule, nil
 
 }
