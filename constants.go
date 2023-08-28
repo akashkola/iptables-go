@@ -21,4 +21,11 @@ const (
     TargetOption string = "-j"
 )
 
+const (
+    InsertOption string = "-I"
+    ListRulesOption string = "-S"
+    TableOption string = "-t"
+    DeleteOption string = "-D"
+)
+
 

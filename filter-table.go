@@ -7,7 +7,7 @@ import (
 )
 
 func GetRules(table Table, chain Chain) ([]FilterTableRule, error) {
-	var args []string = []string{"-S", string(chain)}
+	var args []string = []string{ ListRulesOption, string(chain) }
 	rulesInBytes, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func parseRules(chain Chain, rulesInBytes []byte) ([]FilterTableRule, error) {
 }
 
 func GetDefaultPolicy(table Table, chain Chain) (string, error) {
-	var args []string = []string{"-S", string(chain), "-t", string(table)}
+	var args []string = []string{ ListRulesOption, string(chain), TableOption, string(table) }
 	output, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
 		return "", err
@@ -79,7 +79,7 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 		*filterTableRule.RuleNumber = 1
 	}
 
-	args := []string{"-I", string(chain), strconv.Itoa(*filterTableRule.RuleNumber), "-t", string(table)}
+	args := []string{ InsertOption, string(chain), strconv.Itoa(*filterTableRule.RuleNumber), TableOption, string(table)}
 
 
     if filterTableRule.SourceAdress != nil {
@@ -113,7 +113,7 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 }
 
 func DeleteRule(table Table, chain Chain, ruleNumber *int) error {
-    args := []string{ "-D", string(chain), strconv.Itoa(*ruleNumber) }
+    args := []string{ DeleteOption, string(chain), strconv.Itoa(*ruleNumber) }
 
     _, err := exec.Command(CmdIpTables, args...).CombinedOutput()
     return err
