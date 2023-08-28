@@ -7,18 +7,21 @@ import (
 
 func (s *ApiServer) HandlerDeleteInputRule(w http.ResponseWriter, r *http.Request) error {
 
-    // Get numRule from url
-    numRuleStr, err := GetUrlParameter(r, "numRule")
-    numRule, err := strconv.Atoi(numRuleStr)
+    // Get ruleNumber from url
+    ruleNumberStr := GetUrlParameter(r, "ruleNumber")
+    ruleNumber, err := strconv.Atoi(ruleNumberStr)
     if err != nil {
-        return &ApiError{ErrorMsg: "numRule is not an integer value"}
+        return &ApiError{ErrorMsg: "ruleNumber is not an integer value"}
     }
 
-    // Validate numRule
-    ValidateRuleNumber(TableFilter, ChainInput, &numRule)
+    // Validate ruleNumber
+    err = ValidateRuleNumber(TableFilter, ChainInput, &ruleNumber, true)
+    if err != nil {
+        return err
+    }
 
-    // Delete the rule using numRule
-    err = DeleteRule(TableFilter, ChainInput, &numRule)
+    // Delete the rule using ruleNumber 
+    err = DeleteRule(TableFilter, ChainInput, &ruleNumber)
     if err != nil {
         return err
     }

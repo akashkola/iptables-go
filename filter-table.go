@@ -81,33 +81,27 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 
 	args := []string{"-I", string(chain), strconv.Itoa(*filterTableRule.RuleNumber), "-t", string(table)}
 
-    emptyRule := true
 
     if filterTableRule.SourceAdress != nil {
 		args = append(args, SourceAdressOption, *filterTableRule.SourceAdress)
-        emptyRule = false
 	}
 	if filterTableRule.DestinationAdress != nil {
 		args = append(args, DestinationAdressOption, *filterTableRule.DestinationAdress)
-        emptyRule = false
 	}
 	if filterTableRule.Protocol != nil {
 		args = append(args, ProtocolOption, *filterTableRule.Protocol)
-        emptyRule = false
 	}
 	if filterTableRule.SourcePort != nil {
 		args = append(args, SourcePortOption, strconv.Itoa(int(*filterTableRule.SourcePort)))
-        emptyRule = false
 	}
 	if filterTableRule.DestinationPort != nil {
 		args = append(args, DestinationPortOption, strconv.Itoa(int(*filterTableRule.DestinationPort)))
-        emptyRule = false
 	}
 	if filterTableRule.Target != nil {
 		args = append(args, TargetOption, *filterTableRule.Target)
 	}
 
-    if emptyRule {
+    if IsEmptyRule(filterTableRule, true) {
         return &ApiError{ ErrorMsg: "empty rule" }
     }
 
@@ -118,9 +112,26 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 	return nil
 }
 
-func DeleteRule(table Table, chain Chain, numRule *int) error {
-    args := []string{ "-D", string(chain), strconv.Itoa(*numRule) }
+func DeleteRule(table Table, chain Chain, ruleNumber *int) error {
+    args := []string{ "-D", string(chain), strconv.Itoa(*ruleNumber) }
 
     _, err := exec.Command(CmdIpTables, args...).CombinedOutput()
     return err
+}
+
+func GetRuleByNumRule(table Table, chain Chain, ruleNumber *int) (*FilterTableRule, error) {
+    rules, err := GetRules(table, chain)
+    if err != nil {
+        return nil, err
+    }
+    filterTableRule := new(FilterTableRule)
+    for i, rule := range rules {
+        if i + 1 == *ruleNumber {
+            filterTableRule = &rule
+            break
+        }
+    }
+
+    return filterTableRule, nil
+
 }

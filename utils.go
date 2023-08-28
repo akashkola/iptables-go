@@ -33,8 +33,7 @@ func FilterEmptyString(str *[]string) []string {
     return filteredStringSlice
 }
 
-func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int) error {
-
+func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int, deleteRequest bool) error {
     if ruleNumber == nil {
         ruleNumber = new(int)
         *ruleNumber = 1
@@ -46,9 +45,13 @@ func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int) error {
 	}
 
 	rulesLength := len(rules)
+    
+    if !deleteRequest {
+        rulesLength += 1
+    }
 
-    if *ruleNumber > rulesLength + 1 {
-		return &ApiError{ErrorMsg: "rule number is too big"}
+    if *ruleNumber > rulesLength {
+        return &ApiError{ErrorMsg: "rule number is too big"}
 	}
 
 	if *ruleNumber <= 0 {
@@ -58,20 +61,58 @@ func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int) error {
 	return nil
 }
 
-func GetUrlParameter(r *http.Request, parameter string) (string, error) {
+func GetUrlParameter(r *http.Request, parameter string) string {
     paramValue := chi.URLParam(r, parameter)
-    return paramValue, nil
+    return paramValue
 }
 
+func CopyRule(srcRule *FilterTableRule, dstRule *FilterTableRule) {
+    if srcRule == nil {
+        return
+    }
 
+    if srcRule.SourceAdress != nil {
+        dstRule.SourceAdress = srcRule.SourceAdress
+    }
+    if srcRule.DestinationAdress != nil {
+        dstRule.DestinationAdress = srcRule.DestinationAdress
+    }
+    if srcRule.Protocol != nil {
+        dstRule.Protocol = srcRule.Protocol
+    }
+    if srcRule.SourcePort != nil {
+        dstRule.SourcePort = srcRule.SourcePort
+    }
+    if srcRule.DestinationPort != nil {
+        dstRule.DestinationPort = srcRule.DestinationPort
+    }
+    if srcRule.Target != nil {
+        dstRule.Target = srcRule.Target
+    }
+}
 
+func IsEmptyRule(rule *FilterTableRule, ignoreTarget bool) bool { 
+    if rule.SourceAdress != nil {
+        return false
+    }
+    if rule.DestinationAdress != nil {
+        return false
+    }
+    if rule.Protocol != nil {
+        return false
+    }
+    if rule.SourcePort != nil {
+        return false
+    }
+    if rule.DestinationPort != nil {
+        return false
+    }
+    if !ignoreTarget {
+        if rule.Target != nil {
+            return false
+        }
+    }
 
-
-
-
-
-
-
-
-
+    return true
+}
 

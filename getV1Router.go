@@ -7,7 +7,8 @@ func getV1Router(s *ApiServer) *chi.Mux {
 
     router.Get("/input", MakeHttpHandler(s.HandlerGetInputRules))
     router.Post("/input", MakeHttpHandler(s.HandlerAddInputRule))
-    router.Delete("/input/{numRule}", MakeHttpHandler(s.HandlerDeleteInputRule))
+    router.Delete("/input/{ruleNumber}", MakeHttpHandler(s.HandlerDeleteInputRule))
+    router.Patch("/input/{ruleNumber}", MakeHttpHandler(s.HandlerUpdateInputRule))
 
     return router
 
