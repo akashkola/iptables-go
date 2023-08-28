@@ -118,3 +118,9 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 	return nil
 }
 
+func DeleteRule(table Table, chain Chain, numRule *int) error {
+    args := []string{ "-D", string(chain), strconv.Itoa(*numRule) }
+
+    _, err := exec.Command(CmdIpTables, args...).CombinedOutput()
+    return err
+}

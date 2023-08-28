@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (s *ApiServer) handlerAddInputRule(w http.ResponseWriter, r *http.Request) error {
+func (s *ApiServer) HandlerAddInputRule(w http.ResponseWriter, r *http.Request) error {
 
     // read request body into the buffer
     body, err := ReadRequestBody(r)

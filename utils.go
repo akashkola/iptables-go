@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func ReadRequestBody(r *http.Request) ([]byte, error) {
@@ -55,3 +57,21 @@ func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int) error {
 
 	return nil
 }
+
+func GetUrlParameter(r *http.Request, parameter string) (string, error) {
+    paramValue := chi.URLParam(r, parameter)
+    return paramValue, nil
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

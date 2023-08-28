@@ -11,6 +11,7 @@ import (
 
 type ApiServer struct {
     listenAddr string
+    // TODO: add cache store
 }
 
 type ApiError struct {
@@ -32,7 +33,7 @@ func NewServer(listenAddr string) *ApiServer {
 func (s *ApiServer) Run() {
     router := chi.NewRouter()
 
-    router.Mount("/v1", getV1Router())
+    router.Mount("/v1", getV1Router(s))
 
     log.Printf("Server starting on port %s", s.listenAddr)
     http.ListenAndServe(s.listenAddr, router)
