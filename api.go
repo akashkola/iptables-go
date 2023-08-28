@@ -17,6 +17,8 @@ type ApiError struct {
     ErrorMsg string `json:"error,omitempty"`
 }
 
+type ApiFunc func (http.ResponseWriter, *http.Request) error
+
 func (e *ApiError) Error() string {
     return fmt.Sprintf("Error: %v", e.ErrorMsg)
 }
@@ -40,4 +42,13 @@ func WriteJSON(w http.ResponseWriter, status int, v any) error {
     w.WriteHeader(status)
     w.Header().Add("Content-Type", "application/json")
     return json.NewEncoder(w).Encode(v)
+}
+
+func MakeHttpHandler(apiFunc ApiFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        if err := apiFunc(w, r); err != nil {
+            // TODO: handle errors
+            WriteJSON(w, http.StatusBadRequest, err)
+        }
+    }
 }

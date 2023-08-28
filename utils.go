@@ -30,3 +30,28 @@ func FilterEmptyString(str *[]string) []string {
     }
     return filteredStringSlice
 }
+
+func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int) error {
+
+    if ruleNumber == nil {
+        ruleNumber = new(int)
+        *ruleNumber = 1
+    }
+
+    rules, err := GetRules(table, chain)
+	if err != nil {
+		return err
+	}
+
+	rulesLength := len(rules)
+
+    if *ruleNumber > rulesLength + 1 {
+		return &ApiError{ErrorMsg: "rule number is too big"}
+	}
+
+	if *ruleNumber <= 0 {
+		return &ApiError{ErrorMsg: "invalid rule number"}
+	}
+
+	return nil
+}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -106,13 +105,11 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 	}
 	if filterTableRule.Target != nil {
 		args = append(args, TargetOption, *filterTableRule.Target)
-        emptyRule = false
 	}
 
     if emptyRule {
-        return errors.New("Error: can't add empty rule")
+        return &ApiError{ ErrorMsg: "empty rule" }
     }
-
 
 	_, err := exec.Command(CmdIpTables, args...).CombinedOutput()
 	if err != nil {
@@ -121,27 +118,3 @@ func AddRule(table Table, chain Chain, filterTableRule *FilterTableRule) error {
 	return nil
 }
 
-func ValidateRuleNumber(table Table, chain Chain, ruleNumber *int) error {
-
-    if ruleNumber == nil {
-        ruleNumber = new(int)
-        *ruleNumber = 1
-    }
-
-    rules, err := GetRules(table, chain)
-	if err != nil {
-		return err
-	}
-
-	rulesLength := len(rules)
-	
-    if *ruleNumber > rulesLength + 1 {
-		return &ApiError{ErrorMsg: "rule number is too big"}
-	}
-
-	if *ruleNumber <= 0 {
-		return &ApiError{ErrorMsg: "invalid rule number"}
-	}
-
-	return nil
-}
