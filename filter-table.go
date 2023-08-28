@@ -20,7 +20,7 @@ func GetRules(table Table, chain Chain) ([]FilterTableRule, error) {
 }
 
 func parseRules(chain Chain, rulesInBytes []byte) ([]FilterTableRule, error) {
-	var parsedRules []FilterTableRule = make([]FilterTableRule, 0)
+	var parsedRules []FilterTableRule = []FilterTableRule{}
 	rules := strings.Split(string(rulesInBytes), "\n")
 	for _, rule := range rules[1 : len(rules)-1] {
 		var filterTableRule FilterTableRule

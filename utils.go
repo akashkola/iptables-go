@@ -23,7 +23,7 @@ func GetFilterTableRuleFromRequest(body []byte, filterTableRule *FilterTableRule
 }
 
 func FilterEmptyString(str *[]string) []string {
-    filteredStringSlice := make([]string, 0)
+    filteredStringSlice := []string{}
     for _, strValue :=  range *str {
         if strValue == "" {
             continue
